@@ -1,0 +1,13 @@
+{
+  "products": [
+    {
+      "id": 1,
+      "name": "Radeon",
+      "brand": "HP",
+      "model": "Laptop",
+      "price": "500",
+      "code": "234e",
+      "desc": "very good"
+    }
+  ]
+}
