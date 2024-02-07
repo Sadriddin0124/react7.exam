@@ -26,7 +26,7 @@ const SignUp = () => {
       })
       .catch((err) => {
         console.log(err);
-        toast.error("Registration failed!")
+        toast.error(err.response.data.message, "Registration failed!")
       });
   };
   return (

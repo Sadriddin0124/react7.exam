@@ -23,7 +23,7 @@ const SignIn = () => {
             }
         }).catch((err)=> {
             console.log(err);
-            toast.error("Signing in failed! Try again!")
+            toast.error(err.response.data.message, "Try again!")
         })
     }
   return (

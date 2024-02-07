@@ -72,6 +72,7 @@ const AuthorModal = ({ open, toggle, update }) => {
                 type="file"
                 className="absolute w-[100%] h-[100%] opacity-0 z-20"
                 onChange={(e) => setImg(e.target.files[0])}
+                required={required}
               />
               <img
                 className="w-[100%] absolute top-0 h-[100%] object-contain"
@@ -89,18 +90,21 @@ const AuthorModal = ({ open, toggle, update }) => {
                 className="form-control my-2"
                 placeholder="Fullname"
                 defaultValue={update.full_name}
+                required={required}
               />
               <input
                 type="date"
                 className="form-control my-2"
                 placeholder="Birthdate"
                 defaultValue={update.birthdate}
+                required={required}
               />
               <input
                 type="text"
                 className="form-control my-2"
                 placeholder="Country"
                 defaultValue={update.country}
+                required={required}
               />
             </div>
             <button className="btn btn-primary " type="submit">
