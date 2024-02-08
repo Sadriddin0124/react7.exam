@@ -1,43 +1,32 @@
 import React, { useState } from "react";
 import { Modal, ModalBody } from "reactstrap";
-import axiosClient from "../axiosClient/axiosClient";
-
-const AuthorModal = ({ open, toggle, update }) => {
-  const [img, setImg] = useState(null);
+import axiosClient from "../plugins/axiosClient";
+import upload from "../assets/upload.jpg"
+import "react-datepicker/dist/react-datepicker.css";
+const AuthorModal = ({ open, toggle, update, required }) => {
   const [imagelink, setImageLink] = useState("");
-  const [required, setRequired] = useState(false)
+  const imageUpload = (e) => {
+    let image = e.target.files[0]
+    const imgData = new FormData();
+    imgData.append("file", image);
+    axiosClient.post("/files/upload", imgData).then((res) => {
+      setImageLink(res?.data?.link);
+    }).catch((err)=> {
+      console.log(err);
+    })
+  }
   const addAuthor = (e) => {
     e.preventDefault();
-    const imgData = new FormData();
-    imgData.append("file", img);
+    
     let payload = {
       full_name: e.target[1].value ? e.target[1].value : update.full_name,
       birthdate: e.target[2].value ? e.target[2].value : update.birthdate,
       country: e.target[3].value ? e.target[3].value : update.country,
+      image: imagelink? imagelink : update.image
     };
     if (update !== "") {
-      setRequired(false)
-        if (img) {
-          axiosClient.post("/files/upload", formData).then((res) => {
-              setImageLink(res?.data?.link);
-              if (res.status === 201) {
-                axiosClient.patch(`/author/${update.id}`, {...payload, image: res?.data?.link})
-                  .then((res) => {
-                    if (res?.status === 200) {
-                      window.location.reload();
-                    }
-                  })
-                  .catch((err) => {
-                    console.log(err);
-                  });
-              }
-            })
-            .catch((err) => {
-              console.log(err);
-            });
-        } else {
           axiosClient
-            .patch(`/author/${update.id}`, { ...payload, image: update.image })
+            .patch(`/author/${update.id}`, { ...payload })
             .then((res) => {
               if (res?.status === 200) {
                 window.location.reload();
@@ -46,20 +35,12 @@ const AuthorModal = ({ open, toggle, update }) => {
             .catch((err) => {
               console.log(err);
             });
-      }
     } else {
-      setRequired(true)
-      axiosClient.post("/files/upload", imgData).then((res) => {
-        setImageLink(res?.data?.link);
-        console.log(res);
-        if (res.status == 201) {
-          axiosClient.post("/author", {...payload, image: res?.data?.link}).then((res) => {
-            if (res.status === 201) {
-              toggle();
-            }
-          });
+      axiosClient.post("/author", {...payload, image: imagelink}).then((res) => {
+        if (res.status === 201) {
+          window.location.reload();
         }
-      });
+      });      
     }
   };
   return (
@@ -70,16 +51,16 @@ const AuthorModal = ({ open, toggle, update }) => {
             <div className="w-[40%] relative">
               <input
                 type="file"
-                className="absolute w-[100%] h-[100%] opacity-0 z-20"
-                onChange={(e) => setImg(e.target.files[0])}
+                className="absolute w-[100%] h-[100%] opacity-0 z-20 cursor-crosshair"
+                onChange={imageUpload}
                 required={required}
               />
               <img
-                className="w-[100%] absolute top-0 h-[100%] object-contain"
+                className="w-[100%] absolute top-0 h-[100%] object-contain p-[10px]"
                 src={`${
-                  imagelink === ""
-                    ? "https://png.pngtree.com/png-vector/20191129/ourmid/pngtree-image-upload-icon-photo-upload-icon-png-image_2047546.jpg"
-                    : imagelink
+                  imagelink
+                  ? imagelink
+                  : upload
                 }`}
                 alt="author"
               />
